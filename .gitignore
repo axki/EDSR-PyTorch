@@ -61,6 +61,16 @@ target/
 *.pt
 *.pdf
 *.png
-*.txt
 *.swp
 .vscode
+
+# ignore downloaded pre-trained models
+models/
+
+# ignore venv
+venv/
+.venv/
+
+# ignore jupyter
+.ipynb_checkpoints/
+
