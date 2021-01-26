@@ -8,6 +8,11 @@ import torch
 import torch.nn.utils as utils
 from tqdm import tqdm
 
+from skimage.measure import compare_ssim
+
+import metrics as es
+import numpy as np
+
 class Trainer():
     def __init__(self, args, loader, my_model, my_loss, ckp):
         self.args = args
@@ -79,6 +84,10 @@ class Trainer():
         self.ckp.add_log(
             torch.zeros(1, len(self.loader_test), len(self.scale))
         )
+
+        # (self): my log
+        mlog = {'psnr':[], 'ssim':[], 'mse':[]}
+
         self.model.eval()
 
         timer_test = utility.timer()
@@ -95,6 +104,12 @@ class Trainer():
                     self.ckp.log[-1, idx_data, idx_scale] += utility.calc_psnr(
                         sr, hr, scale, self.args.rgb_range, dataset=d
                     )
+
+                    # (self): log metrics
+                    mlog['psnr'].append(es.get_metric(hr.cpu().numpy()[0], sr.cpu().numpy()[0], 'psnr'))
+                    mlog['ssim'].append(es.get_metric(hr.cpu().numpy()[0], sr.cpu().numpy()[0], 'ssim'))
+                    mlog['mse'].append(es.get_metric(hr.cpu().numpy()[0], sr.cpu().numpy()[0], 'mse'))
+
                     if self.args.save_gt:
                         save_list.extend([lr, hr])
 
@@ -112,6 +127,10 @@ class Trainer():
                         best[1][idx_data, idx_scale] + 1
                     )
                 )
+        # print metrics
+        print(f"max psnr: {np.max(mlog['psnr'])}, mean psnr: {np.mean(mlog['psnr'])}")
+        print(f"max ssim: {np.max(mlog['ssim'])}, mean ssim:  {np.mean(mlog['ssim'])}")
+        print(f"max mse: {np.max(mlog['mse'])}, mean mse: {np.mean(mlog['mse'])}")
 
         self.ckp.write_log('Forward: {:.2f}s\n'.format(timer_test.toc()))
         self.ckp.write_log('Saving...')

@@ -19,6 +19,8 @@ def main():
         t.test()
     else:
         if checkpoint.ok:
+            print(f'Model: {args.model}')
+            print(f'Scale: {args.scale}')
             loader = data.Data(args)
             _model = model.Model(args, checkpoint)
             _loss = loss.Loss(args, checkpoint) if not args.test_only else None

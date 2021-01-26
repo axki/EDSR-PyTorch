@@ -74,3 +74,6 @@ venv/
 # ignore jupyter
 .ipynb_checkpoints/
 
+# ignore local log files
+*.log
+

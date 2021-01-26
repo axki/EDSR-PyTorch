@@ -165,7 +165,7 @@ def quantize(img, rgb_range):
 def calc_psnr(sr, hr, scale, rgb_range, dataset=None):
     if hr.nelement() == 1: return 0
 
-    diff = (sr - hr) / rgb_range
+    diff = (sr - hr)
     if dataset and dataset.dataset.benchmark:
         shave = scale
         if diff.size(1) > 1:
@@ -175,10 +175,10 @@ def calc_psnr(sr, hr, scale, rgb_range, dataset=None):
     else:
         shave = scale + 6
 
-    valid = diff[..., shave:-shave, shave:-shave]
+    valid =  diff[..., shave:-shave, shave:-shave]
     mse = valid.pow(2).mean()
 
-    return -10 * math.log10(mse)
+    return 10 * math.log10(rgb_range**2/mse)
 
 def make_optimizer(args, target):
     '''

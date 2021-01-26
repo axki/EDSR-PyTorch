@@ -33,7 +33,7 @@ class Data:
 
         self.loader_test = []
         for d in args.data_test:
-            if d in ['PD_2D_COR', 'PD_2D_SAG', 'PD_2D_TRA', 'T1_2D_SAG']:
+            if d in ['PD_2D_COR', 'PD_2D_SAG', 'PD_2D_TRA', 'T1_2D_SAG', 'T1_VIBE_2D_SAG']:
                 m = import_module('data.benchmark')
                 testset = getattr(m, 'Benchmark')(args, train=False, name=d)
             else:
